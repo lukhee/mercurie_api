@@ -62,6 +62,7 @@ exports.updateProduct = (req, res, next) => {
             })
         })
         .catch(err=>{
+            err.status = 500
             next(err)
         })
 }
