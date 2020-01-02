@@ -1,7 +1,7 @@
 const route = require('express').Router()
 const employeeController = require('../controller/employeeController')
 
-route.get("viewAll", employeeController.findAllEmployee)
+route.get("/viewAll", employeeController.findAllEmployee)
 
 route.get("/viewEmployees/:ID", employeeController.viewEmployee)
 

@@ -21,10 +21,10 @@ let EmployeeSchema = new Schema({
         type: String,
         required: false
     },
-     products: [{
+    products: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "product"
-     }]
+    }]
 }, {
     timestamps: true
 })

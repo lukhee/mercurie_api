@@ -50,13 +50,16 @@ exports.createProcuct = (req, res, next) => {
 exports.updateProduct = (req, res, next) => {
     const { params } = req
     let ID = params.ID
-    console.log("ID", ID)
     const userID = req.body.userID
-    console.log(userID)
     product.findOneAndUpdate(
         { _id: ID, "employees": { $nin: [userID] } },
         { $push: { employees : userID } })
         .then(result=>{
+            if(!result){
+                let error = new Error("employee already added")
+                error.status = 301
+                throw error
+            }
             res.json({
                 message : result
             })

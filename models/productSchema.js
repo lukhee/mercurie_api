@@ -11,7 +11,8 @@ let ProductSchema = new Schema({
     },
     description: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     status: {
         type: String,
