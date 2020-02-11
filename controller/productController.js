@@ -3,9 +3,15 @@ const Employee = require('../models/employeeSchema')
 
 
 exports.viewProducts = (req, res, next) => {
-    console.log(req.query)
-    product.find()
+    let APIquery = req.query
+     let query = {}
+    if(APIquery.status){
+        query.status = APIquery.status
+    }
+    limit = Number(APIquery.limit)
+    product.find(query)
     .select('-__v -employees')
+    .limit(limit)
     .then(result=>{
         res.status(200).json({
             message: result
