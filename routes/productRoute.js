@@ -1,7 +1,7 @@
 const route = require('express').Router()
 const productController = require('../controller/productController')
 
-route.get("/viewAllProduct", productController.viewProducts)
+route.get("/", productController.viewProducts)
 
 route.get("/viewProduct/:ID", productController.viewProductByID)
 
