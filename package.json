@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Crud testing",
   "main": "app.js",
+  "engines":{
+    "node": "v12.14.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE_ENV=production MONGO_USER=mercurie MONGO_PASSWORD=balogun007. DEFAULT_DB=test node app.js",
