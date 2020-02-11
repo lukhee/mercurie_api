@@ -3,7 +3,9 @@ const Employee = require('../models/employeeSchema')
 
 
 exports.viewProducts = (req, res, next) => {
+    console.log(req.query)
     product.find()
+    .select('-__v -employees')
     .then(result=>{
         res.status(200).json({
             message: result
@@ -17,8 +19,7 @@ exports.viewProducts = (req, res, next) => {
 exports.viewProductByID = (req, res, next) => {
     const { body } = req
     const ID = req.params.ID
-    console.log(ID)
-    product.findById(ID).populate("employees")
+    product.findById(ID).populate("employees").populate("teamLead")
     .then(result=>{
         res.status(200).json({
             message: result
@@ -32,11 +33,23 @@ exports.viewProductByID = (req, res, next) => {
 exports.createProcuct = (req, res, next) => {
     const { body } = req
     const Product = new product({
-        name: body.name,
+        title: body.title,
         description: body.description,
         status: body.status,
+        teamLead: body.teamLead,
+        author: body.author
     })
+    product.find({title: body.title})
+    .then(result=>{
+        if(result){
+            let error = new Error("product already created")
+            error.status = 301
+            throw error
+        }
+        console.log(result)
+        
     return Product.save()
+    })
     .then(result=>{
         res.json({
             message: result
@@ -48,18 +61,53 @@ exports.createProcuct = (req, res, next) => {
 }
 
 exports.updateProduct = (req, res, next) => {
-    const { params } = req
+    const { params } = req,
+        { body } = req,
+        userID = body.userID,
+        teamLead = body.teamLead
+        removeID = body.removeID
+
     let ID = params.ID
-    const userID = req.body.userID
+    let query = {}
+    let update = {}
+
+    if(userID){
+        query = {
+            _id: ID, "employees": { $nin: [userID] }
+        }
+        update = {
+            $push: { employees : userID }
+        }
+    } else if(teamLead) {
+        query = {
+            _id: ID
+        }
+        update = {
+            teamLead: teamLead
+        }
+    }else if(removeID) {
+        query = {
+            _id: ID
+        }
+        update = {
+            $pull: { employees:  removeID } 
+        }
+    } else {
+        let error = new Error("update not recognized")
+        error.status = 301
+        throw error
+    } 
+
     product.findOneAndUpdate(
-        { _id: ID, "employees": { $nin: [userID] } },
-        { $push: { employees : userID } })
+        query,
+        update)
         .then(result=>{
-            if(!result){
+            if(userID && !result){
                 let error = new Error("employee already added")
                 error.status = 301
                 throw error
             }
+            
             res.json({
                 message : result
             })
@@ -68,6 +116,7 @@ exports.updateProduct = (req, res, next) => {
             err.status = 500
             next(err)
         })
+    
 }
 
 exports.deleteProduct = (req, res, next) => {

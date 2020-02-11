@@ -4,7 +4,7 @@ const mongoose = require("mongoose")//Require Mongoose
 var Schema = mongoose.Schema;
 
 let ProductSchema = new Schema({
-    name: {
+    title: {
         type: String,
         required: true,
         unique: true
@@ -12,15 +12,22 @@ let ProductSchema = new Schema({
     description: {
         type: String,
         required: true,
-        unique: true
+    },
+    content: {
+        type: String,
+        required: false,
+    },
+    author: {
+        type: String,
+        required: true,
     },
     status: {
         type: String,
         default: 'pending'
     },
     teamLead: {
-        type: String,
-        required: false
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "employee"
     },
     employees: [{
         type: mongoose.Schema.Types.ObjectId,

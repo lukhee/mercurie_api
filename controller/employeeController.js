@@ -34,8 +34,13 @@ exports.createEmployee = ( req, res, next ) => {
 }
 
 exports.findAllEmployee= (req, res, next) => { 
-    console.log("from find all")
-    Employee.find()
+    let query = { }
+    let users = req.body.member
+    if(users){
+        query = { _id: { $nin: [ ...users ] } }
+    }
+    Employee.find(query)
+    .select('-__v -password')
     .then(result=>{
         res.json({
             message: result

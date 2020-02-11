@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const cors = require('cors');
 const employerRoute = require("./routes/employeeRoute")
 const authRoute = require("./routes/authRoute.js")
 const productRoute = require("./routes/productRoute")
@@ -13,6 +14,7 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json()) // parse application/json
 
