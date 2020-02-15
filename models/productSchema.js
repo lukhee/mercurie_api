@@ -25,6 +25,14 @@ let ProductSchema = new Schema({
         type: String,
         default: 'pending'
     },
+    lengthyDescription: {
+        type: String,
+        required: false,
+    }, 
+    fontAwesome: {
+        type: String,
+        required: false,
+    },
     teamLead: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "employee"

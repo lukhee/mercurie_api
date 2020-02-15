@@ -21,6 +21,10 @@ let EmployeeSchema = new Schema({
         type: String,
         required: false
     },
+    level: {
+        type: String,
+        default: "junior"
+    },
     products: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "product"

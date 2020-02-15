@@ -7,14 +7,14 @@ exports.createEmployee = ( req, res, next ) => {
     let newEmployee = new Employee({
         name: body.name,
         email: body.email,
-        role: body.role
+        role: body.role,
+        level: body.level
     })
     Employee.findOne({email: body.email})
     .then(result=>{
-        console.log(result)
         if(result){
             let error = new Error("employee with the email found")
-            error.status = 401
+            error.status = 400
             throw error
         }
         return bcrypt.hash(body.password, saltRounds)
@@ -37,7 +37,7 @@ exports.findAllEmployee= (req, res, next) => {
     let query = { }
     let users = req.body.member
     if(users){
-        query = { _id: { $nin: [ ...users ] } }
+        query = { _id: { $nin: [ ...users ] } } // excluding some user/employees
     }
     Employee.find(query)
     .select('-__v -password')
@@ -51,15 +51,17 @@ exports.findAllEmployee= (req, res, next) => {
     })
 }
 
-exports.viewEmployee = (req, res, next) => {
+exports.findEmployeeByID = (req, res, next) => {
     const { params } = req
-    const ID = params.ID // we are to get the ID from auth payrol so we change later when we start login in 
-    console.log(req.params)
-    Employee.findById(ID).populate('products')
+    const ID = params.ID
+    console.log(ID)
+    Employee.findById(ID)
+    .populate('products')
+    .select('-__v -password')
     .then(result=>{
         if(!result){
             let error = new Error("employee not found")
-            error.status = 401
+            error.status = 400
             throw(error)
         }
         res.status(201).json({
@@ -72,12 +74,23 @@ exports.viewEmployee = (req, res, next) => {
 }
 
 exports.updateEmployee = (req, res, next) => {
-    res.send("update employees")
+    const { params, body } = req
+    const level = body.level
+    const ID = params.ID
+    Employee.findByIdAndUpdate(ID, { level: level })
+    .then(result=>{
+        res.status(200).json({
+            message: result
+        })
+    })
+    .catch(err=>{
+        next(err)
+    })
 }
 
 exports.deleteEmployee = (req, res, next) => {
     const { params } = req
-    const ID = params.ID
+    const ID = params.id
     Employee.findByIdAndDelete(ID)
     .then(result=>{
         res.json({
@@ -87,5 +100,4 @@ exports.deleteEmployee = (req, res, next) => {
     .catch(err=>{
         next(err)
     })
-    res.send("delete employees")
 }

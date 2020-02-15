@@ -1,14 +1,14 @@
 const route = require('express').Router()
 const employeeController = require('../controller/employeeController')
 
-route.post("/viewAllEmployee", employeeController.findAllEmployee)
+route.get("/findAllEmployees", employeeController.findAllEmployee)
 
-route.get("/viewEmployees/:ID", employeeController.viewEmployee)
+route.get("/findEmployeeByID/:ID", employeeController.findEmployeeByID)
 
 route.post("/createEmployee", employeeController.createEmployee)
 
-route.get("/updateEmployee", employeeController.updateEmployee)
+route.put("/updateEmployee/:ID", employeeController.updateEmployee)
 
-route.get('/deleteEmployee', employeeController.deleteEmployee)
+route.delete('/deleteEmployee/:ID', employeeController.deleteEmployee)
 
 module.exports = route

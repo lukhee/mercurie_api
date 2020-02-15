@@ -47,7 +47,7 @@ exports.createProcuct = (req, res, next) => {
     })
     product.find({title: body.title})
     .then(result=>{
-        if(result){
+        if(!result){
             let error = new Error("product already created")
             error.status = 301
             throw error
@@ -57,7 +57,7 @@ exports.createProcuct = (req, res, next) => {
     return Product.save()
     })
     .then(result=>{
-        res.json({
+        res.status(201).json({
             message: result
         })
     })
@@ -72,11 +72,12 @@ exports.updateProduct = (req, res, next) => {
         userID = body.userID,
         teamLead = body.teamLead
         removeID = body.removeID
+        genaralUpdate = body.genaralUpdate
 
     let ID = params.ID
     let query = {}
     let update = {}
-
+console.log(genaralUpdate)
     if(userID){
         query = {
             _id: ID, "employees": { $nin: [userID] }
@@ -99,7 +100,7 @@ exports.updateProduct = (req, res, next) => {
             $pull: { employees:  removeID } 
         }
     } else {
-        let error = new Error("update not recognized")
+        let error = new Error("update name not recognized")
         error.status = 301
         throw error
     } 

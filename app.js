@@ -10,6 +10,7 @@ const productRoute = require("./routes/productRoute")
 const {PORT} = require('./config')
 const mongooseConnection = require('./uti/db')
 const app = express()
+app.use(cors());
 
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -17,7 +18,6 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(cors());
 app.use(helmet());
 app.use(compression());
 
