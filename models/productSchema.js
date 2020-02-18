@@ -31,7 +31,6 @@ let ProductSchema = new Schema({
     }, 
     fontAwesome: {
         type: String,
-        required: false,
     },
     teamLead: {
         type: mongoose.Schema.Types.ObjectId,

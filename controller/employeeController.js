@@ -8,13 +8,14 @@ exports.createEmployee = ( req, res, next ) => {
         name: body.name,
         email: body.email,
         role: body.role,
-        level: body.level
+        level: body.level,
+        description: body.description
     })
     Employee.findOne({email: body.email})
     .then(result=>{
         if(result){
             let error = new Error("employee with the email found")
-            error.status = 400
+            error.status = 301
             throw error
         }
         return bcrypt.hash(body.password, saltRounds)
@@ -34,13 +35,22 @@ exports.createEmployee = ( req, res, next ) => {
 }
 
 exports.findAllEmployee= (req, res, next) => { 
-    let query = { }
+    let APIquery = req.query
     let users = req.body.member
+    let filterQuery = {}
+    let query = { }
+
+    if(APIquery.status){
+        filterQuery.status = APIquery.status
+    }
+    limit = Number(APIquery.limit)
+
     if(users){
         query = { _id: { $nin: [ ...users ] } } // excluding some user/employees
     }
     Employee.find(query)
     .select('-__v -password')
+    .limit(limit)
     .then(result=>{
         res.json({
             message: result
@@ -54,7 +64,6 @@ exports.findAllEmployee= (req, res, next) => {
 exports.findEmployeeByID = (req, res, next) => {
     const { params } = req
     const ID = params.ID
-    console.log(ID)
     Employee.findById(ID)
     .populate('products')
     .select('-__v -password')

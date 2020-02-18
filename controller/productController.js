@@ -77,7 +77,6 @@ exports.updateProduct = (req, res, next) => {
     let ID = params.ID
     let query = {}
     let update = {}
-console.log(genaralUpdate)
     if(userID){
         query = {
             _id: ID, "employees": { $nin: [userID] }

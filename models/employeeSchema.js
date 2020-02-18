@@ -13,6 +13,10 @@ let EmployeeSchema = new Schema({
         required: true,
         unique: true
     },
+    description: {
+        type: String,
+        default: "Skilled in building web-app"
+    },
     password: {
         type: String,
         required: true
