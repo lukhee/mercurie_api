@@ -12,7 +12,7 @@ module.exports = function MongooseConnection() {
     })
     .catch(err => {
         err.status = 500
-        console.log(err)
-        throw err
+        console.log("server down")
+        throw (err)
     })
 } 

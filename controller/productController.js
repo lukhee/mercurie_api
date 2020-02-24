@@ -4,7 +4,7 @@ const Employee = require('../models/employeeSchema')
 
 exports.viewProducts = (req, res, next) => {
     let APIquery = req.query
-     let query = {}
+    let query = {}
     if(APIquery.status){
         query.status = APIquery.status
     }
@@ -67,6 +67,7 @@ exports.createProcuct = (req, res, next) => {
 }
 
 exports.updateProduct = (req, res, next) => {
+    console.log(req)
     const { params } = req,
         { body } = req,
         userID = body.userID,
@@ -98,11 +99,16 @@ exports.updateProduct = (req, res, next) => {
         update = {
             $pull: { employees:  removeID } 
         }
+    } else if(genaralUpdate) {
+        query = {
+            _id: ID
+        }
+        update = genaralUpdate
     } else {
         let error = new Error("update name not recognized")
         error.status = 301
         throw error
-    } 
+    }
 
     product.findOneAndUpdate(
         query,

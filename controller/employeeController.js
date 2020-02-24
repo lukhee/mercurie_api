@@ -9,7 +9,8 @@ exports.createEmployee = ( req, res, next ) => {
         email: body.email,
         role: body.role,
         level: body.level,
-        description: body.description
+        description: body.description,
+        password: "password"
     })
     Employee.findOne({email: body.email})
     .then(result=>{
@@ -36,20 +37,26 @@ exports.createEmployee = ( req, res, next ) => {
 
 exports.findAllEmployee= (req, res, next) => { 
     let APIquery = req.query
-    let users = req.body.member
+    let users
+    if(req.body.payLoad){
+        users = req.body.payLoad.employee
+    }
     let filterQuery = {}
     let query = { }
-
     if(APIquery.status){
         filterQuery.status = APIquery.status
     }
-    limit = Number(APIquery.limit)
-
     if(users){
         query = { _id: { $nin: [ ...users ] } } // excluding some user/employees
+    } else if(APIquery.status){
+        query = { level: APIquery.status }
+    } else {
+        query = { }
     }
+    limit = Number(APIquery.limit)
+    console.log(query)
     Employee.find(query)
-    .select('-__v -password')
+    .select('-__v -password -email -products')
     .limit(limit)
     .then(result=>{
         res.json({
@@ -99,8 +106,8 @@ exports.updateEmployee = (req, res, next) => {
 
 exports.deleteEmployee = (req, res, next) => {
     const { params } = req
-    const ID = params.id
-    Employee.findByIdAndDelete(ID)
+    const ID = params.ID
+    Employee.findByIdAndRemove(ID)
     .then(result=>{
         res.json({
             message: "employee deleted successfully"
