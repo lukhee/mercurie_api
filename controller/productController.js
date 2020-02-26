@@ -67,54 +67,55 @@ exports.createProcuct = (req, res, next) => {
 }
 
 exports.updateProduct = (req, res, next) => {
-    console.log(req)
     const { params } = req,
         { body } = req,
-        userID = body.userID,
-        teamLead = body.teamLead
-        removeID = body.removeID
-        genaralUpdate = body.genaralUpdate
+        value = body.payload
+        updateField = body.field
+        let ID = params.ID,
+            query = {},
+            update = {}
 
-    let ID = params.ID
-    let query = {}
-    let update = {}
-    if(userID){
-        query = {
-            _id: ID, "employees": { $nin: [userID] }
-        }
-        update = {
-            $push: { employees : userID }
-        }
-    } else if(teamLead) {
-        query = {
-            _id: ID
-        }
-        update = {
-            teamLead: teamLead
-        }
-    }else if(removeID) {
-        query = {
-            _id: ID
-        }
-        update = {
-            $pull: { employees:  removeID } 
-        }
-    } else if(genaralUpdate) {
-        query = {
-            _id: ID
-        }
-        update = genaralUpdate
-    } else {
-        let error = new Error("update name not recognized")
-        error.status = 301
-        throw error
-    }
-
+        switch(updateField) {
+            case "employeeToProject": 
+                query = {
+                    _id: ID, "employees": { $nin: [value] }
+                }
+                update = {
+                    $push: { employees : value }
+                }
+                break;
+            case "removeEmployee":
+                query = {
+                    _id: ID
+                }
+                update = {
+                    $pull: { employees:  value } 
+                }
+                break;
+            case "addTeamLead":
+                query = {
+                    _id: ID
+                }
+                update = {
+                    teamLead: value
+                }
+                break;
+            case "generalUpdate":
+                query = {
+                    _id: ID
+                }
+                update = genaralUpdate
+                break;
+          default:
+            let error = new Error("update name not recognized")
+            error.status = 301
+            throw error
+          }
     product.findOneAndUpdate(
         query,
         update)
         .then(result=>{
-            if(userID && !result){
+            if(value && !result){
                 let error = new Error("employee already added")
                 error.status = 301
                 throw error
